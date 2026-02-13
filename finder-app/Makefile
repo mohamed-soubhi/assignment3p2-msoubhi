@@ -1,14 +1,14 @@
-CC=$(CROSS_COMPILE)gcc
-
+CC ?= $(CROSS_COMPILE)gcc
+CFLAGS = -Wall -Werror
 TARGET = writer
-SRCS = writer.c
 
 all: $(TARGET)
 
-$(TARGET): $(SRCS)
-	@$(CC) -o $@ $^
+$(TARGET): writer.o
+	$(CC) $(CFLAGS) writer.o -o $(TARGET)
+
+writer.o: writer.c
+	$(CC) $(CFLAGS) -c writer.c
 
 clean:
-	@rm -f $(TARGET)
-
-.PHONY: all clean
+	rm -f $(TARGET) *.o
