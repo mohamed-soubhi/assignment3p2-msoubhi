@@ -87,6 +87,12 @@ sudo mknod -m 666 "${OUTDIR}/rootfs/dev/null" c 1 3
 sudo mknod -m 600 "${OUTDIR}/rootfs/dev/console" c 5 1
 
 # TODO: Clean and build the writer utility
+(
+    cd "${FINDER_APP_DIR}/examples/systemcalls"
+    make clean
+    ${CROSS_COMPILE}gcc -Wall -Werror -o writer systemcalls.c -lc
+    cp writer "${OUTDIR}/rootfs/home"
+)
 
 # TODO: Copy the finder related scripts and executables to the /home directory
 # on the target rootfs
