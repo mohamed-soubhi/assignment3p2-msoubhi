@@ -53,7 +53,11 @@ then
     sudo rm  -rf ${OUTDIR}/rootfs
 fi
 
+mkdir -p ${OUTDIR}/rootfs
+
 # TODO: Create necessary base directories
+cd "${OUTDIR}/rootfs"
+mkdir -p bin dev etc home lib lib64 proc sbin sys tmp usr var
 
 cd "$OUTDIR"
 if [ ! -d "${OUTDIR}/busybox" ]
@@ -62,19 +66,25 @@ git clone git://busybox.net/busybox.git
     cd busybox
     git checkout ${BUSYBOX_VERSION}
     # TODO:  Configure busybox
+    make distclean
+    make defconfig
 else
     cd busybox
 fi
 
 # TODO: Make and install busybox
+make -j$(nproc) ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE}
+make CONFIG_PREFIX="${OUTDIR}/rootfs" ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} install
 
 echo "Library dependencies"
-${CROSS_COMPILE}readelf -a bin/busybox | grep "program interpreter"
-${CROSS_COMPILE}readelf -a bin/busybox | grep "Shared library"
-
-# TODO: Add library dependencies to rootfs
+SYSROOT_PATH=$(aarch64-none-linux-gnu-gcc -print-sysroot)
+cp -L "${SYSROOT_PATH}/lib/ld-linux-aarch64.so.1" "${OUTDIR}/rootfs/lib"
+cp -aL "${SYSROOT_PATH}/lib/." "${OUTDIR}/rootfs/lib"
+cp -aL "${SYSROOT_PATH}/lib64/." "${OUTDIR}/rootfs/lib64"
 
 # TODO: Make device nodes
+sudo mknod -m 666 "${OUTDIR}/rootfs/dev/null" c 1 3
+sudo mknod -m 600 "${OUTDIR}/rootfs/dev/console" c 5 1
 
 # TODO: Clean and build the writer utility
 
