@@ -21,7 +21,10 @@ else
 	echo "Using passed directory ${OUTDIR} for output"
 fi
 
-mkdir -p ${OUTDIR}
+# Convert OUTDIR to an absolute path
+OUTDIR=$(realpath $OUTDIR)
+
+mkdir -p "${OUTDIR}" || { echo "ERROR: Could not create directory ${OUTDIR}"; exit 1; }
 
 cd "$OUTDIR"
 if [ ! -d "${OUTDIR}/linux-stable" ]; then
