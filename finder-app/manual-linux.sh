@@ -96,6 +96,11 @@ sudo mknod -m 600 "${OUTDIR}/rootfs/dev/console" c 5 1
 
 # TODO: Copy the finder related scripts and executables to the /home directory
 # on the target rootfs
+cp "${FINDER_APP_DIR}/finder.sh" "${OUTDIR}/rootfs/home"
+cp "${FINDER_APP_DIR}/conf/username.txt" "${OUTDIR}/rootfs/home"
+cp "${FINDER_APP_DIR}/conf/assignment.txt" "${OUTDIR}/rootfs/home"
+cp "${FINDER_APP_DIR}/finder-test.sh" "${OUTDIR}/rootfs/home"
+sed -i 's/\.\.\/conf\/assignment\.txt/conf\/assignment\.txt/g' "${OUTDIR}/rootfs/home/finder-test.sh"
 
 # TODO: Chown the root directory
 
