@@ -5,7 +5,6 @@ project(aesd-assignments)
 # Students can also add paths to their own test files using a ../ prefix to
 # reference this working directory
 
-set(CMAKE_C_FLAGS "-pthread")
 
 set(AUTOTEST_SOURCES
     test/assignment1/Test_hello.c
