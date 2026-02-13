@@ -101,6 +101,9 @@ cp "${FINDER_APP_DIR}/conf/username.txt" "${OUTDIR}/rootfs/home"
 cp "${FINDER_APP_DIR}/conf/assignment.txt" "${OUTDIR}/rootfs/home"
 cp "${FINDER_APP_DIR}/finder-test.sh" "${OUTDIR}/rootfs/home"
 sed -i 's/\.\.\/conf\/assignment\.txt/conf\/assignment\.txt/g' "${OUTDIR}/rootfs/home/finder-test.sh"
+cp "${FINDER_APP_DIR}/autorun-qemu.sh" "${OUTDIR}/rootfs/home"
+
+# TODO: Chown the root directory
 
 # TODO: Chown the root directory
 
