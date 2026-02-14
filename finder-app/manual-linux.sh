@@ -8,7 +8,7 @@ set -u
 OUTDIR=/tmp/aeld
 KERNEL_REPO=git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
 KERNEL_VERSION=v5.15.163
-BUSYBOX_VERSION=1_33_1
+BUSYBOX_VERSION=1_36_1
 FINDER_APP_DIR=$(realpath $(dirname $0))
 ARCH=arm64
 CROSS_COMPILE=aarch64-linux-gnu-
@@ -39,6 +39,7 @@ if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
     echo "Checking out version ${KERNEL_VERSION}"
     git checkout ${KERNEL_VERSION}
 
+    echo "----> Kernel build steps"
     # Kernel build steps
     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} mrproper
     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} defconfig
@@ -74,6 +75,7 @@ then
     git clone git://busybox.net/busybox.git
     cd busybox
     git checkout ${BUSYBOX_VERSION}
+    echo "----> BusyBox Build"
     make distclean
     make defconfig
 else
@@ -81,6 +83,7 @@ else
 fi
 
 # Make and install busybox
+echo "----> Make and install busybox"
 make -j$(nproc) ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE}
 make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} CONFIG_PREFIX=${OUTDIR}/rootfs install
 
@@ -88,6 +91,7 @@ make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} CONFIG_PREFIX=${OUTDIR}/rootfs 
 # Library Dependencies
 ########################################
 
+echo "----> Library Dependencies"
 cd ${OUTDIR}/rootfs
 
 SYSROOT=$(${CROSS_COMPILE}gcc -print-sysroot)
@@ -100,7 +104,7 @@ cp ${SYSROOT}/lib64/libresolv.so.2 lib64
 ########################################
 # Device Nodes
 ########################################
-
+echo "----> Device Nodes"
 sudo mknod -m 666 dev/null c 1 3 || true
 sudo mknod -m 600 dev/console c 5 1 || true
 
@@ -125,6 +129,7 @@ chmod +x ${OUTDIR}/rootfs/home/writer
 # Copy Finder Scripts and Conf
 ########################################
 
+echo "----> Copy Finder Scripts and Conf"
 cp finder.sh finder-test.sh autorun-qemu.sh ${OUTDIR}/rootfs/home/
 
 mkdir -p ${OUTDIR}/rootfs/home/conf
@@ -142,7 +147,7 @@ sed -i '1s|^#! */bin/bash|#!/bin/sh|' ${OUTDIR}/rootfs/home/finder.sh
 ########################################
 # Create init Script
 ########################################
-
+echo "----> Create init Script"
 cat > ${OUTDIR}/rootfs/init << 'EOF'
 #!/bin/sh
 mount -t proc none /proc
@@ -163,6 +168,7 @@ sudo chown -R root:root ${OUTDIR}/rootfs
 # Create initramfs
 ########################################
 
+echo "----> Create initramfs"
 cd ${OUTDIR}/rootfs
 find . | cpio -H newc -ov --owner root:root > ${OUTDIR}/initramfs.cpio
 gzip -f ${OUTDIR}/initramfs.cpio
