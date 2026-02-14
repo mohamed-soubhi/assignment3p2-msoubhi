@@ -82,9 +82,16 @@ else
     cd busybox
 fi
 
+# ---- ADD THESE LINES HERE ----
+echo "----> Disabling tc to fix build error with newer kernel headers"
+sed -i 's/CONFIG_TC=y/CONFIG_TC=n/' .config
+# ------------------------------
+
 # Make and install busybox
 echo "----> Make and install busybox"
 make -j$(nproc) ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE}
+
+echo "----> Make and install busybox  CONFIG_PREFIX=${OUTDIR}/rootfs install"
 make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} CONFIG_PREFIX=${OUTDIR}/rootfs install
 
 ########################################
