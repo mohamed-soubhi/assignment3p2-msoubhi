@@ -13,6 +13,17 @@ FINDER_APP_DIR=$(realpath $(dirname $0))
 ARCH=arm64
 CROSS_COMPILE=aarch64-linux-gnu-
 
+#!/bin/bash
+# Hardcoded cross-compiler settings
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+
+# The rest of your script follows...
+
+if [ -n "${AESD_AUTOGRADER-}" ]; then
+    OUTDIR=/tmp/aesd-autograder
+fi
+
 if [ $# -lt 1 ]
 then
 	echo "Using default directory ${OUTDIR} for output"
