@@ -101,12 +101,11 @@ make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} CONFIG_PREFIX=${OUTDIR}/rootfs 
 echo "----> Library Dependencies"
 cd ${OUTDIR}/rootfs
 
-SYSROOT=$(${CROSS_COMPILE}gcc -print-sysroot)
-
+SYSROOT=/usr/aarch64-linux-gnu
 cp ${SYSROOT}/lib/ld-linux-aarch64.so.1 lib
-cp ${SYSROOT}/lib64/libc.so.6 lib64
-cp ${SYSROOT}/lib64/libm.so.6 lib64
-cp ${SYSROOT}/lib64/libresolv.so.2 lib64
+cp ${SYSROOT}/lib/libc.so.6 lib
+cp ${SYSROOT}/lib/libm.so.6 lib
+cp ${SYSROOT}/lib/libresolv.so.2 lib
 
 ########################################
 # Device Nodes
